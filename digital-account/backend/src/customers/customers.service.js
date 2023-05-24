@@ -11,6 +11,11 @@ class CustomersService {
     findCustomerByCPF(cpf) {
         return this.customerRepository.findByCPF(cpf)
     }
+
+    deleteCustomer(customerToBeDeleted) {
+        return this.customerRepository.delete(customerToBeDeleted)
+    }
+    
 }
 
 module.exports = CustomersService

@@ -1,4 +1,4 @@
-module.exports = [
+ let customerDatabase = [
     {
         name: "William Tadeu",
         birthday:"1996-03-27",
@@ -30,3 +30,5 @@ module.exports = [
         cpf:"85893027",
     },
 ];
+
+module.exports = customerDatabase;

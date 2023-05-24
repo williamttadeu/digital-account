@@ -2,6 +2,7 @@ const express = require("express");
 let database = require("./database");
 var cors = require("cors");
 
+//Aqui estou "importando" os documentos?
 const CustomersController = require('./customers/customers.controller')
 const CustomersService = require('./customers/customers.service')
 const CustomersRepository = require('./customers/customers.repository')
@@ -26,11 +27,17 @@ app.get("/database",function(req, res){
 
 //cruD
 //Delete customer
+/*
 app.delete("/customer/delete/:cpf", (req,res)=>{
     database = database.filter(function(customer){
         return customer.cpf != req.params.cpf;
     })
     res.send(database);
+})
+*/
+
+app.delete("/customers/delete/:cpf", (req,res)=>{
+    customersController.deleteCustomer(req, res)
 })
 
 //Crud
@@ -45,6 +52,12 @@ app.get(`/customers/:cpf`, (req, res) => {
 
 //crUd
 //Update customer
+
+app.patch("/customer/edit/:cpf",(req,res)=>{
+    customersController.updateCustomer(req, res)
+});
+
+/*
 app.patch("/customer/edit/:cpf",(req,res)=>{
     database = database.filter(function(customer){
         return customer.cpf != req.params.cpf;
@@ -56,9 +69,8 @@ app.patch("/customer/edit/:cpf",(req,res)=>{
         cpf:req.body.cpf,
     });
     res.send(database);
-
-
 })
+*/
 
 const PORT = 3000
 app.listen(PORT);
