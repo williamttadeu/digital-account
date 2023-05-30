@@ -25,23 +25,11 @@ app.get("/database",function(req, res){
     res.send(database);
 });
 
-//cruD
-//Delete customer
-/*
-app.delete("/customer/delete/:cpf", (req,res)=>{
-    database = database.filter(function(customer){
-        return customer.cpf != req.params.cpf;
-    })
-    res.send(database);
-})
-*/
-
-app.delete("/customers/delete/:cpf", (req,res)=>{
+//CRUD
+app.delete("/customers/:cpf", (req,res)=>{
     customersController.deleteCustomer(req, res)
 })
 
-//Crud
-//Create customer
 app.post(`/customers`, (req, res) => {
     customersController.createCustomer(req, res)
 })
@@ -50,27 +38,10 @@ app.get(`/customers/:cpf`, (req, res) => {
     customersController.findCustomerByCPF(req, res)
 })
 
-//crUd
-//Update customer
-
 app.patch("/customer/edit/:cpf",(req,res)=>{
-    customersController.updateCustomer(req, res)
+    customersController.updateCustomerByCPF(req, res)
 });
 
-/*
-app.patch("/customer/edit/:cpf",(req,res)=>{
-    database = database.filter(function(customer){
-        return customer.cpf != req.params.cpf;
-    });
-    database.push({
-        name: req.body.name,
-        birthday:req.body.birthday,
-        email:req.body.email,
-        cpf:req.body.cpf,
-    });
-    res.send(database);
-})
-*/
 
 const PORT = 3000
 app.listen(PORT);
