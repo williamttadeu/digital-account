@@ -1,4 +1,4 @@
-const { cpf: numeroCPF } = require('cpf-cnpj-validator');
+const PersonValidator = require('./validators/person.validator')
 
 class CustomersController {
     constructor(customerService) {
@@ -14,33 +14,10 @@ class CustomersController {
             return
         }
 
-        try {
-            CPFValidation(cpf);
-          } catch (error) {
-            res.status(400).send(error.message);
-            return;
-          }
-
-        if (!emailValidation(email)) {
-        res.status(400).send('Bad Request: Invalid email')
-        return
-        }
-          
-        try {
-            birthdayValidation(birthday);
-        } catch (error) {
-            res.status(400).send(error.message);
-            return;
-        }
-
-        try {
-            nameValidation(name);
-        } catch (error) {
-            res.status(400).send(error.message);
-            return;
-        }
-
-       
+        try { PersonValidator.validateCpf(cpf) } catch(error) { res.status(400).send(error.message) }
+        if(!PersonValidator.validateEmail(email)) { return res.status(400).send('Bad Request: Invalid email') }
+        try { PersonValidator.validateBirthday(birthday) } catch(error) { res.status(400).send(error.message) }
+        try { PersonValidator.validateName(name) } catch(error) { res.status(400).send(error.message) }
 
         // Segurança
         const customerToBeCreated = {name,cpf,email,birthday}
@@ -104,62 +81,5 @@ class CustomersController {
         }
     }
 }
-
-
- CPFValidation = (cpf) => {
-    if (!numeroCPF.isValid(cpf)) {
-      throw new Error('Error: Invalid CPF');
-    }
-    
-    if (!/^\d+$/.test(cpf)) {
-      throw new Error('Error: CPF must contain only numbers');
-    }
-  };
-
-  emailValidation = (email)=> {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  }
-  
-  birthdayValidation = (birthday) =>{
-    const regex = /^\d{4}\/\d{2}\/\d{2}$/;
-  
-    if (!regex.test(birthday)) {
-        throw new Error('Error: Invalid birthday format');
-    }
-  
-    const parts = birthday.split('/');
-    const year = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1;
-    const day = parseInt(parts[2], 10);
-  
-    if (isNaN(year) || isNaN(month) || isNaN(day)) {
-        throw new Error('Error: invalid characters');
-    }
-  
-    const date = new Date(year, month, day);
-  
-    if (
-        date.getFullYear() !== year ||
-        date.getMonth() !== month ||
-        date.getDate() !== day
-    ) {
-        throw new Error('Error: Invalid date');
-    }
-  
-  }
-
-  nameValidation =(name) =>{
-    const nameLength = name.length;
-    
-    if (!(nameLength >= 3 && nameLength <= 30)) {
-        throw new Error('Error: name invalid number of characters');
-    }
-
-    const regex = /^[a-zA-Z-' ]+$/;
-    if (!(regex.test(name))) {
-        throw new Error('Error: name invalid characters');
-      }
-  }
 
 module.exports = CustomersController
