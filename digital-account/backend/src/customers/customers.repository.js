@@ -2,23 +2,49 @@ class CustomersRepository {
     constructor() {
         this.customerDatabase = require('../database.js');
     }
+    checkIfNameAlreadyExists=(customerWithId, customerDatabase)=> {
+      const nameExistingData = customerDatabase.some(
+          (customer) => customer.name === customerWithId.name
+      );
+      if (nameExistingData) {
+          throw new Error('Name already registered.');
+      }
+    }
+  
+    checkIfCpfAlreadyExists =(customerWithId, customerDatabase) =>{
+      const CPFExistingData = customerDatabase.some(
+          (customer) => customer.cpf === customerWithId.cpf
+      );
+      if (CPFExistingData) {
+          throw new Error('CPF already registered.');
+      }
+    }
+  
+    CheckIfEmailAlreadyExists=(customerWithId, customerDatabase) =>{
+      const emailExistingData = customerDatabase.some(
+          (customer) => customer.email === customerWithId.email
+      );
+      if (emailExistingData) {
+          throw new Error('E-mail already registered.');
+      }
+    }
 
     insert(customerToBeCreated) {
-        try {
-            const id = this.customerDatabase.length + 1;
-            const customerWithId = {...customerToBeCreated, id};
+        
+      const id = this.customerDatabase.length + 1;
+      const customerWithId = {...customerToBeCreated, id};
 
-            checkNameExistingData(customerWithId, this.customerDatabase);
-            CPFExistingData(customerWithId, this.customerDatabase);
-            emailExistingData(customerWithId, this.customerDatabase);
-            
-            this.customerDatabase.push(customerWithId);
-            return customerWithId;
-            
-          } catch (error) {
-            console.error('Error:', error.message);
-            
-          }
+      try {
+        this.checkIfNameAlreadyExists(customerWithId, this.customerDatabase);
+        this.checkIfCpfAlreadyExists(customerWithId, this.customerDatabase);
+        this.CheckIfEmailAlreadyExists(customerWithId, this.customerDatabase);
+        
+        this.customerDatabase.push(customerWithId);
+        return customerWithId;
+        
+      } catch (error) {
+        throw error;
+      }
     }
 
     findByCPF(cpf) {
@@ -58,32 +84,6 @@ class CustomersRepository {
 
 module.exports = CustomersRepository;
 
-checkNameExistingData=(customerWithId, customerDatabase)=> {
-    const nameExistingData = customerDatabase.some(
-        (customer) => customer.name === customerWithId.name
-    );
-    if (nameExistingData) {
-        throw new Error('Error: Name already registered.');
-    }
-}
-
-CPFExistingData=(customerWithId, customerDatabase) =>{
-    const CPFExistingData = customerDatabase.some(
-        (customer) => customer.cpf === customerWithId.cpf
-    );
-    if (CPFExistingData) {
-        throw new Error('Error: CPF already registered.');
-    }
-}
-
-emailExistingData=(customerWithId, customerDatabase) =>{
-    const emailExistingData = customerDatabase.some(
-        (customer) => customer.email === customerWithId.email
-    );
-    if (emailExistingData) {
-        throw new Error('Error: E-mail already registered.');
-    }
-}
 
 checkNameModifyData = (updatedCustomer, customerDatabase, currentCustomer) => {
     const nameExistingData = customerDatabase.some(

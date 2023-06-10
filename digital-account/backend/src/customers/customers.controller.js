@@ -1,4 +1,3 @@
-const PersonValidator = require('./validators/person.validator')
 
 class CustomersController {
     constructor(customerService) {
@@ -14,19 +13,19 @@ class CustomersController {
             return
         }
 
-        try { PersonValidator.validateCpf(cpf) } catch(error) { res.status(400).send(error.message) }
-        if(!PersonValidator.validateEmail(email)) { return res.status(400).send('Bad Request: Invalid email') }
-        try { PersonValidator.validateBirthday(birthday) } catch(error) { res.status(400).send(error.message) }
-        try { PersonValidator.validateName(name) } catch(error) { res.status(400).send(error.message) }
-
         // Segurança
         const customerToBeCreated = {name,cpf,email,birthday}
         try {
             const createdCustomer = this.customerService.createCustomer(customerToBeCreated);
             //res.json(createdCustomer);
           } catch (error) {
-            res.status(400).send(error.message);
-            return;
+            /*res.status(400).send(error.message);
+            return;*/
+            if (error.message === 'Invalid email' || error.message === 'Name already registered.' || error.message === 'CPF already registered.') {
+                res.status(400).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: 'Internal Server Error' });
+            }
         }
         
         // Chamar o caso de uso

@@ -1,11 +1,25 @@
+const PersonValidator = require('./validators/person.validator')
+
 class CustomersService {
     constructor(customerRepository) {
         this.customerRepository = customerRepository
     }
 
     createCustomer(customerToBeCreated) {
-        // Antes de inserir no banco, verificar se está negativado na SPC
-        return this.customerRepository.insert(customerToBeCreated)
+        const { name, cpf, email, birthday } = customerToBeCreated;
+        try {
+            PersonValidator.validateCpf(cpf);
+            if (!PersonValidator.validateEmail(email)) {
+                throw new Error('Bad Request: Invalid email');
+            }
+            PersonValidator.validateBirthday(birthday);
+            PersonValidator.validateName(name);
+    
+            // Antes de inserir no banco, verificar se está negativado na SPC
+            return this.customerRepository.insert(customerToBeCreated);
+        } catch (error) {
+            throw error;
+        }
     }
 
     findCustomerByCPF(cpf) {
