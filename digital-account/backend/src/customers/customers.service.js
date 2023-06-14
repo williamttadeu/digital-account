@@ -6,20 +6,15 @@ class CustomersService {
     }
 
     createCustomer(customerToBeCreated) {
-        const { name, cpf, email, birthday } = customerToBeCreated;
-        try {
-            PersonValidator.validateCpf(cpf);
-            if (!PersonValidator.validateEmail(email)) {
-                throw new Error('Bad Request: Invalid email');
-            }
-            PersonValidator.validateBirthday(birthday);
-            PersonValidator.validateName(name);
-    
-            // Antes de inserir no banco, verificar se está negativado na SPC
-            return this.customerRepository.insert(customerToBeCreated);
-        } catch (error) {
-            throw error;
-        }
+        const { name, cpf, email, birthday } = customerToBeCreated
+
+        PersonValidator.validateCpf(cpf)
+        PersonValidator.validateEmail(email)
+        PersonValidator.validateBirthday(birthday)
+        PersonValidator.validateName(name)
+
+        // Antes de inserir no banco, verificar se está negativado na SPC
+        return this.customerRepository.insert(customerToBeCreated)
     }
 
     findCustomerByCPF(cpf) {
@@ -31,10 +26,9 @@ class CustomersService {
     }
 
     updateCustomerByCPF(cpf, name, email, birthday) {
-        const updatedCustomer = {name,email,birthday,};
-        return this.customerRepository.updateByCPF(cpf, updatedCustomer);
+        const updatedCustomer = { name, email, birthday }
+        return this.customerRepository.updateByCPF(cpf, updatedCustomer)
     }
-    
 }
 
 module.exports = CustomersService

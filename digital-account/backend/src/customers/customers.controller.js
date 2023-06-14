@@ -1,3 +1,4 @@
+const CustomersErrors = require('./customers.errors')
 
 class CustomersController {
     constructor(customerService) {
@@ -6,55 +7,58 @@ class CustomersController {
 
     async createCustomer(req, res) {
         // Validação da requisição HTTP
-        const {name,cpf,email,birthday} = req.body
-        
-        if(!name || !cpf || !email || !birthday) {
+        const { name, cpf, email, birthday } = req.body
+
+        if (!name || !cpf || !email || !birthday) {
             res.status(400).send('Bad Request')
             return
         }
 
         // Segurança
-        const customerToBeCreated = {name,cpf,email,birthday}
+        const customerToBeCreated = { name, cpf, email, birthday }
         try {
-            const createdCustomer = this.customerService.createCustomer(customerToBeCreated);
-            //res.json(createdCustomer);
-          } catch (error) {
-            /*res.status(400).send(error.message);
-            return;*/
-            if (error.message === 'Invalid email' || error.message === 'Name already registered.' || error.message === 'CPF already registered.') {
-                res.status(400).json({ error: error.message });
+            const createdCustomer =
+                this.customerService.createCustomer(customerToBeCreated)
+            return res.json(createdCustomer)
+        } catch (error) {
+            if (
+                error.message === CustomersErrors.errors.INVALID_CPF ||
+                error.message === CustomersErrors.errors.INVALID_BIRTHDAY ||
+                error.message === CustomersErrors.errors.INVALID_EMAIL ||
+                error.message ===
+                    CustomersErrors.errors.ALREADY_REGISTERED_NAME ||
+                error.message ===
+                    CustomersErrors.errors.ALREADY_REGISTERED_EMAIL ||
+                error.message === CustomersErrors.errors.ALREADY_REGISTERED_CPF
+            ) {
+                return res.status(400).json({ error: error.message })
             } else {
-                res.status(500).json({ error: 'Internal Server Error' });
+                return res.status(500).json({ error: 'Internal Server Error' })
             }
         }
-        
-        // Chamar o caso de uso
-        const createdCustomer = await this.customerService.createCustomer(customerToBeCreated)
-        
-        // Responder corretamente
-        res.json(createdCustomer)
     }
 
     async findCustomerByCPF(req, res) {
-        const {cpf} = req.params
+        const { cpf } = req.params
         const foundCustomer = await this.customerService.findCustomerByCPF(cpf)
-        
-        if(!foundCustomer) {
+
+        if (!foundCustomer) {
             res.status(404).send('Not Found')
         }
 
         res.json(foundCustomer)
     }
 
-    async deleteCustomer(req, res){
+    async deleteCustomer(req, res) {
         //const cpf = req.params.cpf;
-        const {cpf} = req.params
-        const deleteCustomerFromDataBase = await this.customerService.deleteCustomer(cpf)
+        const { cpf } = req.params
+        const deleteCustomerFromDataBase =
+            await this.customerService.deleteCustomer(cpf)
 
-        if(!deleteCustomerFromDataBase) {
+        if (!deleteCustomerFromDataBase) {
             res.status(500).send('Internal Server Error')
         }
-        if(!deleteCustomerFromDataBase) {
+        if (!deleteCustomerFromDataBase) {
             res.status(404).send('Not Found')
         }
 
@@ -62,21 +66,25 @@ class CustomersController {
     }
 
     async updateCustomerByCPF(req, res) {
-        const { cpf } = req.params;
-        const { name, email, birthday } = req.body;
-    
-        if (!name || !email || !birthday) {
-            res.status(400).send('Bad Request');
-            return;
-        }
-    
-        try { 
-            const updatedCustomer = await this.customerService
-            .updateCustomerByCPF(cpf, name, email, birthday);
-            res.json(updatedCustomer);
+        const { cpf } = req.params
+        const { name, email, birthday } = req.body
 
+        if (!name || !email || !birthday) {
+            res.status(400).send('Bad Request')
+            return
+        }
+
+        try {
+            const updatedCustomer =
+                await this.customerService.updateCustomerByCPF(
+                    cpf,
+                    name,
+                    email,
+                    birthday
+                )
+            res.json(updatedCustomer)
         } catch (error) {
-            res.status(400).send(error.message);
+            res.status(400).send(error.message)
         }
     }
 }

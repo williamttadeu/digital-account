@@ -1,6 +1,6 @@
-const express = require("express");
-let database = require("./database");
-var cors = require("cors");
+const express = require('express')
+let database = require('./database')
+var cors = require('cors')
 
 //Aqui estou "importando" os documentos?
 const CustomersController = require('./customers/customers.controller')
@@ -12,21 +12,20 @@ const customersRepository = new CustomersRepository() // instanciar repository
 const customersService = new CustomersService(customersRepository) // instanciar service
 const customersController = new CustomersController(customersService) // instanciar controller
 
-const app = express();
-app.use(cors());
+const app = express()
+app.use(cors())
 app.use(express.json())
 
-app.get("/", function(req,res) {
-    res.send("Hello World");
-});
+app.get('/', function (req, res) {
+    res.send('Hello World')
+})
 
-
-app.get("/database",function(req, res){
-    res.send(database);
-});
+app.get('/database', function (req, res) {
+    res.send(database)
+})
 
 //CRUD
-app.delete("/customers/:cpf", (req,res)=>{
+app.delete('/customers/:cpf', (req, res) => {
     customersController.deleteCustomer(req, res)
 })
 
@@ -38,10 +37,10 @@ app.get(`/customers/:cpf`, (req, res) => {
     customersController.findCustomerByCPF(req, res)
 })
 
-app.patch("/customer/edit/:cpf",(req,res)=>{
+app.patch('/customer/edit/:cpf', (req, res) => {
     customersController.updateCustomerByCPF(req, res)
-});
+})
 
 const PORT = 3000
-app.listen(PORT);
-console.log(`Server is running at PORT ${PORT}`);
+app.listen(PORT)
+console.log(`Server is running at PORT ${PORT}`)
