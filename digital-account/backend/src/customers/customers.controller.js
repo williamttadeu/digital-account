@@ -10,7 +10,7 @@ class CustomersController {
         const { name, cpf, email, birthday } = req.body
 
         if (!name || !cpf || !email || !birthday) {
-            res.status(400).send('Bad Request')
+            res.status(400).send(CustomersErrors.errors.REQUIRED_FIELDS)
             return
         }
 
@@ -33,7 +33,7 @@ class CustomersController {
             ) {
                 return res.status(400).json({ error: error.message })
             } else {
-                return res.status(500).json({ error: 'Internal Server Error' })
+                return res.status(500).json(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
             }
         }
     }
@@ -43,7 +43,7 @@ class CustomersController {
         const foundCustomer = await this.customerService.findCustomerByCPF(cpf)
 
         if (!foundCustomer) {
-            res.status(404).send('Not Found')
+            return res.status(404).send(CustomersErrors.errors.USER_NOT_FOUND)
         }
 
         res.json(foundCustomer)
@@ -56,10 +56,10 @@ class CustomersController {
             await this.customerService.deleteCustomer(cpf)
 
         if (!deleteCustomerFromDataBase) {
-            res.status(500).send('Internal Server Error')
+            return res.status(500).send(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
         }
         if (!deleteCustomerFromDataBase) {
-            res.status(404).send('Not Found')
+            return res.status(404).send(CustomersErrors.errors.USER_NOT_FOUND)
         }
 
         res.json(deleteCustomerFromDataBase)
@@ -70,7 +70,7 @@ class CustomersController {
         const { name, email, birthday } = req.body
 
         if (!name || !email || !birthday) {
-            res.status(400).send('Bad Request')
+            res.status(400).send(CustomersErrors.errors.REQUIRED_FIELDS)
             return
         }
 
@@ -84,7 +84,18 @@ class CustomersController {
                 )
             res.json(updatedCustomer)
         } catch (error) {
-            res.status(400).send(error.message)
+            if(error.message === CustomersErrors.errors.INVALID_CPF ||
+                error.message === CustomersErrors.errors.INVALID_BIRTHDAY ||
+                error.message === CustomersErrors.errors.INVALID_EMAIL ||
+                error.message ===
+                    CustomersErrors.errors.ALREADY_REGISTERED_NAME ||
+                error.message ===
+                    CustomersErrors.errors.ALREADY_REGISTERED_EMAIL ||
+                error.message === CustomersErrors.errors.ALREADY_REGISTERED_CPF)
+                {return res.status(400).json({ error: error.message })
+            } else {
+                return res.status(500).json(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
+            }
         }
     }
 }

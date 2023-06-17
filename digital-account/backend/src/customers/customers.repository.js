@@ -62,27 +62,25 @@ class CustomersRepository {
         )
 
         if (customerIndex === -1) {
-            throw new Error('Error: Customer not found.')
+            throw new Error(CustomersErrors.errors.USER_NOT_FOUND)
         }
 
         const customer = this.customerDatabase[customerIndex]
 
-        try {
-            this.checkNameModifyData(updatedCustomer, customer)
-            this.checkEmailModifyData(updatedCustomer, customer)
+        
+        this.checkNameModifyData(updatedCustomer, customer)
+        this.checkEmailModifyData(updatedCustomer, customer)
 
-            const updatedCustomerData = Object.assign(
-                {},
-                customer,
-                updatedCustomer
-            )
+        const updatedCustomerData = Object.assign(
+            {},
+            customer,
+            updatedCustomer
+        )
 
-            this.customerDatabase[customerIndex] = updatedCustomerData
+        this.customerDatabase[customerIndex] = updatedCustomerData
 
-            return updatedCustomerData
-        } catch (error) {
-            throw new Error(`Error: ${error.message}`)
-        }
+        return updatedCustomerData
+        
     }
 
     checkNameModifyData(updatedCustomer, currentCustomer) {
