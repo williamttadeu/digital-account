@@ -2,7 +2,8 @@ const CustomersErrors = require('./customers.errors')
 
 class CustomersRepository {
     constructor() {
-        this.customerDatabase = require('../database.js')
+        //this.customerDatabase = require('../database.js')
+        this.customerDatabase = require('../models/connections');
     }
 
     checkIfNameAlreadyExists(customerWithId) {
