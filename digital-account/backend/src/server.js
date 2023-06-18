@@ -1,8 +1,8 @@
 const express = require('express')
 let database = require('./database')
 var cors = require('cors')
-require('dotenv').config();
-const connection = require('./models/connections');
+require('dotenv').config()
+const connection = require('./models/connections')
 
 //Aqui estou "importando" os documentos?
 const CustomersController = require('./customers/customers.controller')
@@ -10,7 +10,7 @@ const CustomersService = require('./customers/customers.service')
 const CustomersRepository = require('./customers/customers.repository')
 
 // Injeção de dependência = forma em que estamos vinculando as classes
-const customersRepository = new CustomersRepository(connection);
+const customersRepository = new CustomersRepository(connection)
 //const customersRepository = new CustomersRepository() // instanciar repository
 const customersService = new CustomersService(customersRepository) // instanciar service
 const customersController = new CustomersController(customersService) // instanciar controller
@@ -27,20 +27,11 @@ app.get('/database', function (req, res) {
     res.send(database)
 })
 
-app.get('/customersdatabase', async (req, res) => {
-    /*
-    try {
-      const query = 'SELECT * FROM personalInformation';
-      const [rows, fields] = await connection.query(query);
-      res.json(rows);
-    } catch (error) {
-      console.error('Erro ao obter os usuários do banco de dados:', error);
-      res.status(500).json({ error: 'Erro ao obter os usuários do banco de dados' });
-    }
-    */
-   const [rows] = await connection.execute('SELECT * FROM personalInformation');
-   res.json(rows);
-  });
+app.get('/customers/database', async (req, res) => {
+    const query = 'SELECT * FROM personal_info'
+    const [rows, fields] = await connection.query(query)
+    res.json(rows)
+})
 
 //CRUD
 app.delete('/customers/:cpf', (req, res) => {
@@ -60,6 +51,6 @@ app.patch('/customer/edit/:cpf', (req, res) => {
 })
 
 //const PORT = 3000
-const PORT = process.env.PORT;
+const PORT = process.env.PORT
 app.listen(PORT)
 console.log(`Server is running at PORT ${PORT}`)
