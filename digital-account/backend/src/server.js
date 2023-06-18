@@ -2,6 +2,7 @@ const express = require('express')
 let database = require('./database')
 var cors = require('cors')
 require('dotenv').config()
+
 const connection = require('./models/connections')
 
 //Aqui estou "importando" os documentos?

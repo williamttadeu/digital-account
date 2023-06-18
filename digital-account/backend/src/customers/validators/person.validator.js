@@ -41,6 +41,7 @@ class PersonValidator {
             throw new Error(CustomersErrors.errors.INVALID_BIRTHDAY)
         }
 
+        // YYYY-MM-DD
         const parts = birthday.split('/')
         const year = parseInt(parts[0], 10)
         const month = parseInt(parts[1], 10) - 1

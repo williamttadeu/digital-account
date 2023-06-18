@@ -1,9 +1,10 @@
 const CustomersErrors = require('./customers.errors')
 
 class CustomersRepository {
-    constructor() {
-        //this.customerDatabase = require('../database.js')
-        this.customerDatabase = require('../models/connections');
+    constructor(databaseConnection) {
+        this.databaseConnection = databaseConnection
+        // this.customerDatabase = require('../database.js')
+        // this.customerDatabase = require('../models/connections');
     }
 
     checkIfNameAlreadyExists(customerWithId) {
@@ -34,16 +35,27 @@ class CustomersRepository {
         }
     }
 
-    insert(customerToBeCreated) {
-        const id = this.customerDatabase.length + 1
-        const customerWithId = { ...customerToBeCreated, id }
+    async insert(customerToBeCreated) {
+        const { cpf, name, birthday, email } = customerToBeCreated
 
-        this.checkIfNameAlreadyExists(customerWithId)
-        this.checkIfCpfAlreadyExists(customerWithId)
-        this.CheckIfEmailAlreadyExists(customerWithId)
+        const insertQuery = `INSERT INTO personal_info (cpf, name, birthday, email) VALUES ('${cpf}', '${name}', '${birthday}', '${email}')`
+        const databaseResponse = await this.databaseConnection.query(
+            insertQuery
+        )
 
-        this.customerDatabase.push(customerWithId)
-        return customerWithId
+        const readQuery = `SELECT * FROM personal_info WHERE id = ${databaseResponse[0].insertId}`
+        const [rows, fields] = await this.databaseConnection.query(readQuery)
+        return rows
+
+        // const id = this.customerDatabase.length + 1
+        // const customerWithId = { ...customerToBeCreated, id }
+
+        // this.checkIfNameAlreadyExists(customerWithId)
+        // this.checkIfCpfAlreadyExists(customerWithId)
+        // this.CheckIfEmailAlreadyExists(customerWithId)
+
+        // this.customerDatabase.push(customerWithId)
+        // return customerWithId
     }
 
     findByCPF(cpf) {
@@ -68,20 +80,14 @@ class CustomersRepository {
 
         const customer = this.customerDatabase[customerIndex]
 
-        
         this.checkNameModifyData(updatedCustomer, customer)
         this.checkEmailModifyData(updatedCustomer, customer)
 
-        const updatedCustomerData = Object.assign(
-            {},
-            customer,
-            updatedCustomer
-        )
+        const updatedCustomerData = Object.assign({}, customer, updatedCustomer)
 
         this.customerDatabase[customerIndex] = updatedCustomerData
 
         return updatedCustomerData
-        
     }
 
     checkNameModifyData(updatedCustomer, currentCustomer) {

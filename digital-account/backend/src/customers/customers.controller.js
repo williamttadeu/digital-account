@@ -17,8 +17,9 @@ class CustomersController {
         // Segurança
         const customerToBeCreated = { name, cpf, email, birthday }
         try {
-            const createdCustomer =
-                this.customerService.createCustomer(customerToBeCreated)
+            const createdCustomer = await this.customerService.createCustomer(
+                customerToBeCreated
+            )
             return res.json(createdCustomer)
         } catch (error) {
             if (
@@ -33,7 +34,9 @@ class CustomersController {
             ) {
                 return res.status(400).json({ error: error.message })
             } else {
-                return res.status(500).json(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
+                return res
+                    .status(500)
+                    .json(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
             }
         }
     }
@@ -56,7 +59,9 @@ class CustomersController {
             await this.customerService.deleteCustomer(cpf)
 
         if (!deleteCustomerFromDataBase) {
-            return res.status(500).send(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
+            return res
+                .status(500)
+                .send(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
         }
         if (!deleteCustomerFromDataBase) {
             return res.status(404).send(CustomersErrors.errors.USER_NOT_FOUND)
@@ -84,17 +89,21 @@ class CustomersController {
                 )
             res.json(updatedCustomer)
         } catch (error) {
-            if(error.message === CustomersErrors.errors.INVALID_CPF ||
+            if (
+                error.message === CustomersErrors.errors.INVALID_CPF ||
                 error.message === CustomersErrors.errors.INVALID_BIRTHDAY ||
                 error.message === CustomersErrors.errors.INVALID_EMAIL ||
                 error.message ===
                     CustomersErrors.errors.ALREADY_REGISTERED_NAME ||
                 error.message ===
                     CustomersErrors.errors.ALREADY_REGISTERED_EMAIL ||
-                error.message === CustomersErrors.errors.ALREADY_REGISTERED_CPF)
-                {return res.status(400).json({ error: error.message })
+                error.message === CustomersErrors.errors.ALREADY_REGISTERED_CPF
+            ) {
+                return res.status(400).json({ error: error.message })
             } else {
-                return res.status(500).json(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
+                return res
+                    .status(500)
+                    .json(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
             }
         }
     }

@@ -5,12 +5,12 @@ class CustomersService {
         this.customerRepository = customerRepository
     }
 
-    createCustomer(customerToBeCreated) {
+    async createCustomer(customerToBeCreated) {
         const { name, cpf, email, birthday } = customerToBeCreated
 
         PersonValidator.validateCpf(cpf)
         PersonValidator.validateEmail(email)
-        PersonValidator.validateBirthday(birthday)
+        // PersonValidator.validateBirthday(birthday)
         PersonValidator.validateName(name)
 
         // Antes de inserir no banco, verificar se está negativado na SPC
