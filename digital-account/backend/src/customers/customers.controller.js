@@ -22,6 +22,18 @@ class CustomersController {
             )
             return res.json(createdCustomer)
         } catch (error) {
+            const errorMessages = Object.values(CustomersErrors.errors);
+
+            if (errorMessages.includes(error.message)) {
+                return res.status(400).json({ error: error.message });
+            }
+
+            if (error.message.includes("Duplicate")) {
+                return res.status(400).json(CustomersErrors.errors.ALREADY_REGISTERED_DATA);
+            }
+
+            return res.status(500).json(CustomersErrors.errors.INTERNAL_SERVER_ERROR);
+            /*
             if (
                 error.message === CustomersErrors.errors.INVALID_CPF ||
                 error.message === CustomersErrors.errors.INVALID_BIRTHDAY ||
@@ -33,11 +45,14 @@ class CustomersController {
                 error.message === CustomersErrors.errors.ALREADY_REGISTERED_CPF
             ) {
                 return res.status(400).json({ error: error.message })
-            } else {
+            } if(error.message.includes("Duplicate")){
+                return res.status(400).json(CustomersErrors.errors.ALREADY_REGISTERED_DATA)
+            }else {
                 return res
                     .status(500)
                     .json(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
             }
+            */
         }
     }
 
@@ -55,19 +70,23 @@ class CustomersController {
     async deleteCustomer(req, res) {
         //const cpf = req.params.cpf;
         const { cpf } = req.params
-        const deleteCustomerFromDataBase =
+
+        try{
+            const deleteCustomerFromDataBase =
             await this.customerService.deleteCustomer(cpf)
+            res.json("Delete operation completed successfully.")
 
-        if (!deleteCustomerFromDataBase) {
-            return res
-                .status(500)
-                .send(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
-        }
-        if (!deleteCustomerFromDataBase) {
-            return res.status(404).send(CustomersErrors.errors.USER_NOT_FOUND)
-        }
+        }catch(error){
+            if(error.message === CustomersErrors.errors.CPF_NOT_FOUND)
+            {
+                return res.status(400).json({ error: error.message })
+            } else {
+                return res
+                    .status(500)
+                    .json(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
+            }
 
-        res.json(deleteCustomerFromDataBase)
+        }
     }
 
     async updateCustomerByCPF(req, res) {
@@ -89,22 +108,17 @@ class CustomersController {
                 )
             res.json(updatedCustomer)
         } catch (error) {
-            if (
-                error.message === CustomersErrors.errors.INVALID_CPF ||
-                error.message === CustomersErrors.errors.INVALID_BIRTHDAY ||
-                error.message === CustomersErrors.errors.INVALID_EMAIL ||
-                error.message ===
-                    CustomersErrors.errors.ALREADY_REGISTERED_NAME ||
-                error.message ===
-                    CustomersErrors.errors.ALREADY_REGISTERED_EMAIL ||
-                error.message === CustomersErrors.errors.ALREADY_REGISTERED_CPF
-            ) {
-                return res.status(400).json({ error: error.message })
-            } else {
-                return res
-                    .status(500)
-                    .json(CustomersErrors.errors.INTERNAL_SERVER_ERROR)
+            const errorMessages = Object.values(CustomersErrors.errors);
+
+            if (errorMessages.includes(error.message)) {
+                return res.status(400).json({ error: error.message });
             }
+
+            if (error.message.includes("Duplicate")) {
+                return res.status(400).json(CustomersErrors.errors.ALREADY_REGISTERED_DATA);
+            }
+
+            return res.status(500).json(CustomersErrors.errors.INTERNAL_SERVER_ERROR);
         }
     }
 }

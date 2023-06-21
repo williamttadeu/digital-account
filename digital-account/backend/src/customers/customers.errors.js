@@ -8,9 +8,13 @@ class CustomersErrors {
         ALREADY_REGISTERED_CPF: 'CPF already registered',
         ALREADY_REGISTERED_NAME: 'Name already registered',
         ALREADY_REGISTERED_EMAIL: 'Email already registered CPF',
+        ALREADY_REGISTERED_DATA: 'Data already registered',
+        //ALREADY_REGISTERED_DATA:"ER_DUP_ENTRY",
 
-        USER_NOT_FOUND: "User ot found",
+        USER_NOT_FOUND: "User not found",
+        CPF_NOT_FOUND: "CPF not found",
         REQUIRED_FIELDS: "You need to fill all required fields",
+        
 
         INTERNAL_SERVER_ERROR: "Internal Server Error",
     }

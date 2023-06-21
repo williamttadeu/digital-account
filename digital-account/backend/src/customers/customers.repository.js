@@ -3,6 +3,7 @@ const CustomersErrors = require('./customers.errors')
 class CustomersRepository {
     constructor(databaseConnection) {
         this.databaseConnection = databaseConnection
+        this.tableName = "personal_info"
         // this.customerDatabase = require('../database.js')
         // this.customerDatabase = require('../models/connections');
     }
@@ -38,13 +39,12 @@ class CustomersRepository {
     async insert(customerToBeCreated) {
         const { cpf, name, birthday, email } = customerToBeCreated
 
-        const insertQuery = `INSERT INTO personal_info (cpf, name, birthday, email) VALUES ('${cpf}', '${name}', '${birthday}', '${email}')`
-        const databaseResponse = await this.databaseConnection.query(
-            insertQuery
-        )
+        const insertQuery = `INSERT INTO ${this.tableName} (cpf, name, birthday, email) VALUES ('${cpf}', '${name}', '${birthday}', '${email}')`
+        const databaseResponse = await this.databaseConnection.query(insertQuery)
 
-        const readQuery = `SELECT * FROM personal_info WHERE id = ${databaseResponse[0].insertId}`
+        const readQuery = `SELECT * FROM ${this.tableName} WHERE id = ${databaseResponse[0].insertId}`
         const [rows, fields] = await this.databaseConnection.query(readQuery)
+        
         return rows
 
         // const id = this.customerDatabase.length + 1
@@ -58,18 +58,46 @@ class CustomersRepository {
         // return customerWithId
     }
 
-    findByCPF(cpf) {
-        return this.customerDatabase.find((customer) => customer.cpf === cpf)
+    async findByCPF(cpf) {
+        const findByCPFQuery = `SELECT * FROM ${this.tableName} WHERE cpf = ${cpf}`
+        const [rows, fields] = await this.databaseConnection.query(findByCPFQuery)
+        return rows
+        
+        //return this.customerDatabase.find((customer) => customer.cpf === cpf)
     }
 
-    delete(cpf) {
+    async delete(cpf) {
+        const deleteQuery = `DELETE FROM ${this.tableName} WHERE cpf = ?`
+        const result = await this.databaseConnection.query(deleteQuery, [cpf]);
+
+        if (!result[0].affectedRows > 0) {
+            throw new Error(CustomersErrors.errors.CPF_NOT_FOUND)
+        }
+
+        /*
         this.customerDatabase = this.customerDatabase.filter(
             (customer) => customer.cpf !== cpf
         )
         return this.customerDatabase
+        */
     }
 
-    updateByCPF(cpf, updatedCustomer) {
+    async updateByCPF(cpf, updatedCustomer) {
+        
+        const { name, email, birthday } = updatedCustomer;
+        
+        const updateQuery = `UPDATE ${this.tableName} SET name = '${name}', email = '${email}', birthday = '${birthday}' WHERE cpf = '${cpf}'`;
+        const result = await this.databaseConnection.query(updateQuery);
+        
+        if (result[0].affectedRows === 0) {
+            throw new Error(CustomersErrors.errors.USER_NOT_FOUND);
+        }
+        
+        return updatedCustomer;
+        
+ 
+
+        /*
         const customerIndex = this.customerDatabase.findIndex(
             (customer) => customer.cpf === cpf
         )
@@ -88,6 +116,7 @@ class CustomersRepository {
         this.customerDatabase[customerIndex] = updatedCustomerData
 
         return updatedCustomerData
+        */
     }
 
     checkNameModifyData(updatedCustomer, currentCustomer) {
