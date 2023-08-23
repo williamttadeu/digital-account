@@ -48,16 +48,6 @@ class CustomersRepository {
         const [rows, fields] = await this.databaseConnection.query(readQuery)
 
         return rows
-
-        // const id = this.customerDatabase.length + 1
-        // const customerWithId = { ...customerToBeCreated, id }
-
-        // this.checkIfNameAlreadyExists(customerWithId)
-        // this.checkIfCpfAlreadyExists(customerWithId)
-        // this.CheckIfEmailAlreadyExists(customerWithId)
-
-        // this.customerDatabase.push(customerWithId)
-        // return customerWithId
     }
 
     async findByCPF(cpf) {

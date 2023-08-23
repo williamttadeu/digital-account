@@ -4,8 +4,13 @@
 import express, { Request, Response } from 'express'
 import { GetUserRequest } from './ServerInterfaces'
 import { UsersController } from './users/UsersController'
+import { UsersService } from './users/UsersService'
+import { UsersRepository } from './users/UsersRepository'
+import connection from './models/connections'
 
-const userController = new UsersController()
+const usersRepository = new UsersRepository(connection)
+const usersService = new UsersService(usersRepository)
+const userController = new UsersController(usersService)
 
 const app = express()
 app.use(express.json())

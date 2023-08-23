@@ -1,0 +1,20 @@
+version: '3'
+services:
+  db:
+    build:
+      context: ../ts-digital-account
+      dockerfile: Dockerfile
+    ports:
+      - 3306:3306
+    restart: always
+    environment:
+      MYSQL_USER: william
+      MYSQL_PASSWORD: senha
+      MYSQL_ROOT_PASSWORD: senha
+      MYSQL_DATABASE: william
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
